@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Question Paper Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #f0f4f8, #d9e4f5);
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    header {
+      background-color: #4a90e2;
+      padding: 20px;
+      text-align: center;
+      color: white;
+    }
+
+    .container {
+      background-color: white;
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1, h2 {
+      margin: 0;
+      color: #4a90e2;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      font-weight: 500;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    input[type='text'],
+    input[type='number'],
+    input[type='file'],
+    select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+
+    input[type='text']:focus,
+    input[type='number']:focus,
+    select:focus {
+      border-color: #4a90e2;
+      outline: none;
+      box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+    }
+
+    input[type='submit'] {
+      margin-top: 30px;
+      background-color: #4a90e2;
+      color: white;
+      padding: 14px;
+      font-size: 16px;
+      border: none;
+      width: 100%;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: background-color 0.3s ease;
+    }
+
+    input[type='submit']:hover,
+    input[type='submit']:focus {
+      background-color: #357ab8;
+      outline: none;
+    }
+
+    .section-title {
+      margin-top: 40px;
+      margin-bottom: 10px;
+      color: #333;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 8px;
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+
+    .question-section label {
+      margin-top: 12px;
+      font-weight: 500;
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+
+    .file-info {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .file-upload-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-top: 15px;
+    }
+
+    .left-section {
+      flex: 1; 
+      margin-right: 10px; 
+    }
+
+    .manual-section {
+      flex: 1; 
+      margin-left: 10px; 
+    }
+
+    .manual-mark-section {
+      display: flex;
+      flex-direction: column;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        margin: 20px 20px;
+        padding: 20px;
+      }
+      input[type='submit'] {
+        padding: 12px;
+        font-size: 14px;
+      }
+      .file-upload-container {
+        flex-direction: column;
+        margin-left: 0;
+      }
+      .left-section, .manual-section {
+        margin-right: 0; 
+        margin-left: 0; 
+      }
+    }
+
+    
+    .file-upload-section {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    .file-chosen-section {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .error-message {
+      color: red;
+      margin-top: 10px;
+      display: none; 
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Question Paper Generator</h1>
+  </header>
+
+  <main>
+    <section class="container" aria-label="Question paper generation form">
+      <form method="POST" enctype="multipart/form-data" aria-describedby="form-desc" id="question-paper-form">
+        <h2 id="form-desc">Question Paper Geneartor</h2>
+
+        <div class="file-upload-container">
+          <div class="left-section file-upload-section">
+            <label for="file-upload">Select Files</label>
+            <input type="file" id="file-upload" name="files" multiple required aria-required="true" />
+            <div class="file-info" id="file-info"></div>
+
+            <label for="main-title-input">Main Title</label>
+            <input
+              type="text"
+              id="main-title-input"
+              name="main_title"
+              placeholder="Enter main title"
+              required
+              aria-required="true"
+            />
+
+            <label for="left-title-input">Left Title</label>
+            <input
+              type="text"
+              id="left-title-input"
+              name="left_title"
+              placeholder="Enter left title"
+            />
+
+            <label for="right-title-input">Right Title</label>
+            <input
+              type="text"
+              id="right-title-input"
+              name="right_title"
+              placeholder="Enter right title"
+            />
+
+            <label for="color-input">Paper Color</label>
+            <select id="color-input" name="color" aria-label="Select paper color">
+              <option value="white">White</option>
+              <option value="yellow">Yellow</option>
+              <option value="blue">Blue</option>
+              <option value="green">Green</option>
+              <option value="pink">Pink</option>
+              <option value="gray">Gray</option>
+              <option value="lightblue">Light Blue</option>
+              <option value="lightgreen">Light Green</option>
+            </select>
+
+            <label for="paper-style-select">Paper Style</label>
+            <select id="paper-style-select" name="paper_type" aria-label="Select paper style">
+              <option value="A4" selected>A4</option>
+              <option value="Letter">Letter</option>
+              <option value="Legal">Legal</option>
+              <option value="A5">A5</option>
+              <option value="B5">B5</option>
+              <option value="Executive">Executive</option>
+            </select>
+
+            <label for="font-style-select">Font Style</label>
+            <select id="font-style-select" name="font" aria-label="Select font style">
+              <option value="Times New Roman" selected>Times New Roman</option>
+              <option value="Arial">Arial</option>
+              <option value="Roboto">Roboto</option>
+              <option value="Calibri">Calibri</option>
+              <option value="Georgia">Georgia</option>
+              <option value="Verdana">Verdana</option>
+              <option value="Courier New">Courier New</option>
+            </select>
+
+            <label for="font-size-input">Font Size</label>
+            <input
+              type="number"
+              id="font-size-input"
+              name="font_size"
+              value="12"
+              min="6"
+              max="72"
+              placeholder="Enter font size"
+              autocomplete="off"
+            />
+
+            <label for="total-marks-input">Total Marks</label>
+            <input
+              type="number"
+              id="total-marks-input"
+              name="total_marks"
+              placeholder="Enter total marks"
+              required
+              aria-required="true"
+              min="0"
+            />
+
+            <label for="auto-split-select">Auto Create Mark Split-Up?</label>
+            <select id="auto-split-select" name="auto_split" aria-label="Select auto create mark split-up option">
+              <option value="no">No</option>
+              <option value="yes">Yes</option>
+            </select>
+            <div class="error-message" id="error-message">Total marks do not match with manual marks!</div>
+          </div>
+
+          <div id="manual-mark-section" class="manual-section file-chosen-section hidden">
+            <h3 class="section-title">If Manual, Enter Number of Questions</h3>
+            <div class="question-section" role="group" aria-labelledby="marks-group">
+              <label for="mark-1">1 Mark</label>
+              <input type="number" id="mark-1" name="mark_1" value="0" min="0" />
+
+              <label for="mark-2">2 Marks</label>
+              <input type="number" id="mark-2" name="mark_2" value="0" min="0" />
+
+              <label for="mark-5">5 Marks</label>
+              <input type="number" id="mark-5" name="mark_5" value="0" min="0" />
+
+              <label for="mark-6">6 Marks</label>
+              <input type="number" id="mark-6" name="mark_6" value="0" min="0" />
+
+              <label for="mark-8">8 Marks</label>
+              <input type="number" id="mark-8" name="mark_8" value="0" min="0" />
+
+              <label for="mark-10">10 Marks</label>
+              <input type="number" id="mark-10" name="mark_10" value="0" min="0" />
+
+              <label for="mark-12">12 Marks</label>
+              <input type="number" id="mark-12" name="mark_12" value="0" min="0" />
+
+              <label for="mark-16">16 Marks</label>
+              <input type="number" id="mark-16" name="mark_16" value="0" min="0" />
+
+              <label for="mark-20">20 Marks</label>
+              <input type="number" id="mark-20" name="mark_20" value="0" min="0" />
+            </div>
+          </div>
+        </div>
+
+        <input type="submit" value="Generate Question Paper" />
+      </form>
+    </section>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const autoSplitSelect = document.getElementById('auto-split-select');
+      const manualMarkSection = document.getElementById('manual-mark-section');
+      const fileUpload = document.getElementById('file-upload');
+      const fileInfo = document.getElementById('file-info');
+      const totalMarksInput = document.getElementById('total-marks-input');
+      const errorMessage = document.getElementById('error-message');
+
+      function toggleManualMarkSection() {
+        if (autoSplitSelect.value === 'yes') {
+          manualMarkSection.classList.add('hidden');
+          manualMarkSection.querySelectorAll('input[type="number"]').forEach(input => {
+            input.value = 0;
+          });
+        } else {
+          manualMarkSection.classList.remove('hidden');
+        }
+      }
+
+      function updateFileInfo() {
+        const files = Array.from(fileUpload.files);
+        if (files.length > 0) {
+          fileInfo.textContent = files.map(file => file.name).join(', ');
+        } else {
+          fileInfo.textContent = '';
+        }
+      }
+
+      function validateTotalMarks(event) {
+        const manualMarks = [
+          parseInt(document.getElementById('mark-1').value) * 1,
+          parseInt(document.getElementById('mark-2').value) * 2,
+          parseInt(document.getElementById('mark-5').value) * 5,
+          parseInt(document.getElementById('mark-6').value) * 6,
+          parseInt(document.getElementById('mark-8').value) * 8,
+          parseInt(document.getElementById('mark-10').value) * 10,
+          parseInt(document.getElementById('mark-12').value) * 12,
+          parseInt(document.getElementById('mark-16').value) * 16,
+          parseInt(document.getElementById('mark-20').value) * 20,
+        ];
+
+        const totalManualMarks = manualMarks.reduce((acc, curr) => acc + curr, 0);
+        const totalMarks = parseInt(totalMarksInput.value);
+
+        if (totalMarks !== totalManualMarks) {
+          event.preventDefault(); 
+          errorMessage.style.display = 'block'; 
+        } else {
+          errorMessage.style.display = 'none'; 
+        }
+      }
+
+     
+      toggleManualMarkSection();
+
+      autoSplitSelect.addEventListener('change', toggleManualMarkSection);
+      fileUpload.addEventListener('change', updateFileInfo);
+      document.getElementById('question-paper-form').addEventListener('submit', validateTotalMarks);
+    });
+  </script>
+</body>
+</html>
